@@ -517,7 +517,7 @@ static void nextTrack(uint16_t track) {
     if (activeModifier->handleNext() == true)
       return;
 
-  if (track == _lastTrackFinished) {
+  if (track == _lastTrackFinished && myFolder->mode != 4) { // im Einzelmodus endet die Queue nie
     return;
   }
   _lastTrackFinished = track;
@@ -561,9 +561,8 @@ static void nextTrack(uint16_t track) {
   }
 
   if (myFolder->mode == 4) {
-    Serial.println(F("Einzel Modus aktiv -> Strom sparen"));
-    //    mp3.sleep();      // Je nach Modul kommt es nicht mehr zurück aus dem Sleep!
-    setstandbyTimer();
+    Serial.println(F("Einzelmodus aktiv -> Titel wiederholen"));
+    mp3.playFolderTrack(myFolder->folder, currentTrack);
   }
   if (myFolder->mode == 5) {
     if (currentTrack != numTracksInFolder) {
@@ -883,7 +882,7 @@ void playFolder() {
   // Einzel Modus: eine Datei aus dem Ordner abspielen
   if (myFolder->mode == 4) {
     Serial.println(
-      F("Einzel Modus -> eine Datei aus dem Odrdner abspielen"));
+      F("Einzel Modus -> eine Datei aus dem Ordner abspielen"));
     currentTrack = myFolder->special;
     mp3.playFolderTrack(myFolder->folder, currentTrack);
   }
